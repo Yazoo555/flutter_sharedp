@@ -29,77 +29,6 @@ class _signinState extends State<signin> {
 
   Map<String, dynamic> loginEmptyList = {};
 
-  void _registerUser() async {
-    if (fkey.currentState!.validate()) {
-      _performSignIn();
-    }
-  }
-
-  Future<void> _performSignIn() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final jsonString = sharedPreferences.getString('dataList');
-
-    print('User DATA: $jsonString');
-
-    if (jsonString != null) {
-      try {
-        final jsonData = jsonDecode(jsonString);
-
-        if (jsonData is List<dynamic>) {
-          signinlist =
-              jsonData.map((json) => Usermodel.fromJson(json)).toList();
-          print(signinlist);
-        } else if (jsonData is Map<String, dynamic>) {
-          loginEmptyList
-              .addAll(Usermodel.fromJson(jsonData) as Map<String, dynamic>);
-        }
-      } catch (e) {
-        print(e);
-      }
-    }
-    signinlist.add(
-      Usermodel(
-        name: nameControl.text,
-        email: emailControl.text,
-        password: passwordControl.text,
-        mnumber: mobileControl.text,
-        userid: const Uuid().v4(),
-      ),
-    );
-
-    List<Map<String, dynamic>> jsonDataList =
-        signinlist.map((cv) => cv.toJson()).toList();
-    print(signinlist);
-    sharedPreferences.setString('dataList', json.encode(jsonDataList));
-    loginEmptyList[emailControl.text] = jsonDataList;
-    String jsonData = json.encode(jsonDataList);
-    sharedPreferences.setString('dataList', jsonData);
-
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const login()));
-    setState(() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Success"),
-            content: Text(
-                "User registered successfully!"), // Customize the message as needed
-            actions: <Widget>[
-              TextButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                },
-              ),
-            ],
-          );
-        },
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,22 +81,7 @@ class _signinState extends State<signin> {
                     ),
                   ),
                   onPressed: () {
-                    if (fkey.currentState!.validate()) {
-                      setState(() {
-                        try {
-                          Usermodel? xyz = signinlist.firstWhere(
-                            (user) => user.email == emailControl.text,
-                          );
-                          if (xyz != null) {
-                            print(xyz);
-                          } else {
-                            _registerUser();
-                          }
-                        } catch (e) {
-                          _registerUser();
-                        }
-                      });
-                    }
+                    _registerUser();
                   },
                   child: Text(
                     "Sign In",
@@ -179,6 +93,79 @@ class _signinState extends State<signin> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _registerUser() async {
+    if (fkey.currentState!.validate()) {
+      await _performSignIn(); // Wait for the data to be saved
+      _showSuccessDialog();
+    }
+  }
+
+  Future<void> _performSignIn() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final jsonString = sharedPreferences.getString('dataList');
+
+    print('User DATA: $jsonString');
+
+    if (jsonString != null) {
+      try {
+        final jsonData = jsonDecode(jsonString);
+
+        if (jsonData is List<dynamic>) {
+          signinlist =
+              jsonData.map((json) => Usermodel.fromJson(json)).toList();
+          print(signinlist);
+        } else if (jsonData is Map<String, dynamic>) {
+          loginEmptyList
+              .addAll(Usermodel.fromJson(jsonData) as Map<String, dynamic>);
+        }
+      } catch (e) {
+        // print(e);
+      }
+    }
+    signinlist.add(
+      Usermodel(
+        name: nameControl.text,
+        email: emailControl.text,
+        password: passwordControl.text,
+        mnumber: mobileControl.text,
+        userid: const Uuid().v4(),
+      ),
+    );
+
+    List<Map<String, dynamic>> jsonDataList =
+        signinlist.map((cv) => cv.toJson()).toList();
+    print(signinlist);
+    sharedPreferences.setString('dataList', json.encode(jsonDataList));
+    loginEmptyList[emailControl.text] = jsonDataList;
+    String jsonData = json.encode(jsonDataList);
+    sharedPreferences.setString('dataList', jsonData);
+
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const login()));
+  }
+
+  void _showSuccessDialog() {
+    // Move the dialog code to a separate method and call it when needed
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Success"),
+          content: Text("User registered successfully!"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
