@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:logshare/email.dart';
+import 'package:logshare/credt/email.dart';
 import 'package:logshare/login.dart';
-import 'package:logshare/mnumber.dart';
+import 'package:logshare/credt/mnumber.dart';
 import 'package:logshare/model.dart';
-import 'package:logshare/name.dart';
-import 'package:logshare/pwd.dart';
+import 'package:logshare/credt/name.dart';
+import 'package:logshare/credt/pwd.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -98,7 +98,7 @@ class _signinState extends State<signin> {
 
   Future<void> _registerUser() async {
     if (fkey.currentState!.validate()) {
-      await _performSignIn(); // Wait for the data to be saved
+      await _performSignIn();
       _showSuccessDialog();
     }
   }
