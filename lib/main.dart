@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logshare/login.dart';
 import 'package:logshare/signin.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class myapp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Login-UI",
-      home: signin(),
+      home: login(),
     );
   }
 }

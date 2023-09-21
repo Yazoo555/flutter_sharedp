@@ -19,6 +19,7 @@ class signin extends StatefulWidget {
 class _signinState extends State<signin> {
   final fkey = GlobalKey<FormState>();
   List<Usermodel> signinlist = [];
+  Map<String, dynamic> loginEmptyList = {};
 
   //  List<Usermodel> dataList = [];
 
@@ -26,8 +27,6 @@ class _signinState extends State<signin> {
   TextEditingController mobileControl = TextEditingController();
   TextEditingController emailControl = TextEditingController();
   TextEditingController passwordControl = TextEditingController();
-
-  Map<String, dynamic> loginEmptyList = {};
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +45,7 @@ class _signinState extends State<signin> {
             child: Column(
               children: [
                 Text(
-                  "Welcome To Sign-In Page",
+                  "Sign-In",
                   style: TextStyle(
                       fontSize: 25,
                       letterSpacing: 1.1,
@@ -143,9 +142,17 @@ class _signinState extends State<signin> {
     String jsonData = json.encode(jsonDataList);
     sharedPreferences.setString('dataList', jsonData);
 
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const login()));
+    Future.microtask(() {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const login(),
+        ),
+      );
+
+      Future.delayed(Duration(milliseconds: 180), () {
+        _showSuccessDialog();
+      });
+    });
   }
 
   void _showSuccessDialog() {
